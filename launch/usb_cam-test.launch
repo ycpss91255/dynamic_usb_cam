@@ -1,0 +1,18 @@
+<launch>
+  <arg name="dynamic_cam_reconfigure_mode" default="$(env USB_CAM_MODE)" doc="USB_CAM_MODE type [calibration, action]"/>
+
+  <node name="usb_cam" pkg="usb_cam" type="usb_cam_node" output="screen" >
+    <param if="$(eval dynamic_cam_reconfigure_mode == 'calibration')" name="calibration_mode" value="true"/>
+    <param if="$(eval dynamic_cam_reconfigure_mode == 'action')" name="calibration_mode" value="false"/>
+    <param name="video_device" value="/dev/video0" />
+    <param name="image_width" value="640" />
+    <param name="image_height" value="480" />
+    <param name="pixel_format" value="yuyv" />
+    <param name="camera_frame_id" value="usb_cam" />
+    <param name="io_method" value="mmap"/>
+  </node>
+  <node name="image_view" pkg="image_view" type="image_view" respawn="false" output="screen">
+    <remap from="image" to="/usb_cam/image_raw"/>
+    <param name="autosize" value="true" />
+  </node>
+</launch>
